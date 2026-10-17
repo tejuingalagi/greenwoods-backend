@@ -1,6 +1,8 @@
 package com.teju.greenwoods.api.controller;
 
 import java.util.List;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,5 +40,11 @@ public class AdminEnquiryController {
             @PathVariable("id") Long id,
             @Valid @RequestBody EnquiryStatusUpdateRequest request) {
         return enquiryService.updateStatus(id, request);
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
+        enquiryService.deleteEnquiry(id);
+        return ResponseEntity.noContent().build();
     }
 }

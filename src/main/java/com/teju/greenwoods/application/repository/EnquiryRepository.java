@@ -15,4 +15,8 @@ public interface EnquiryRepository {
     List<Enquiry> findAllByOrderByCreatedAtDesc();
 
     List<Enquiry> findByStatusOrderByCreatedAtDesc(EnquiryStatus status);
+    
+    boolean existsById(Long id);
+
+    void deleteById(Long id);
 }

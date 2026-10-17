@@ -107,4 +107,12 @@ public class EnquiryService {
 
         return toResponse(enquiryRepository.save(enquiry));
     }
+    
+    @Transactional
+    public void deleteEnquiry(Long id) {
+        if (!enquiryRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Enquiry " + id + " not found");
+        }
+        enquiryRepository.deleteById(id);
+    }
 }
