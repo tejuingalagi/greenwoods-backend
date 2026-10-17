@@ -1,6 +1,7 @@
 package com.teju.greenwoods.domain.entity;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import com.teju.greenwoods.domain.enums.EnquirySource;
 import com.teju.greenwoods.domain.enums.EnquiryStatus;
@@ -73,6 +74,14 @@ public class Enquiry {
             this.status = EnquiryStatus.NEW;
         }
     }
+    
+    @Column(name = "visit_date")
+    private LocalDate visitDate;
+
+    @Column(name = "time_slot", length = 50)
+    private String timeSlot;
+
+    private Integer visitors;
 
     
 }

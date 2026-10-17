@@ -1,6 +1,7 @@
 package com.teju.greenwoods.api.exception;
 
 import java.util.LinkedHashMap;
+import com.teju.greenwoods.application.exception.InvalidRequestException;
 import org.springframework.http.HttpStatus;
 import com.teju.greenwoods.application.exception.InvalidCredentialsException;
 import java.util.Map;
@@ -57,6 +58,13 @@ public class GlobalExceptionHandler {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("status", 400);
         body.put("error", "Invalid value for '" + ex.getName() + "'");
+        return ResponseEntity.badRequest().body(body);
+    }
+    @ExceptionHandler(InvalidRequestException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidRequest(InvalidRequestException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("status", 400);
+        body.put("error", ex.getMessage());
         return ResponseEntity.badRequest().body(body);
     }
 }

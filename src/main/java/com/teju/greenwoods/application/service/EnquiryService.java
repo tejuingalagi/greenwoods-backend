@@ -1,6 +1,10 @@
 package com.teju.greenwoods.application.service;
 
 import org.springframework.stereotype.Service;
+import java.time.LocalDate;
+
+import com.teju.greenwoods.application.exception.InvalidRequestException;
+import com.teju.greenwoods.domain.enums.EnquirySource;
 import org.springframework.transaction.annotation.Transactional;
 import com.teju.greenwoods.application.dto.EnquiryRequest;
 import com.teju.greenwoods.application.dto.EnquiryResponse;
@@ -23,6 +27,8 @@ public class EnquiryService {
 
     @Transactional
     public EnquiryResponse createEnquiry(EnquiryRequest request) {
+        validateSiteVisit(request);
+
         Enquiry enquiry = new Enquiry();
         enquiry.setName(request.name().trim());
         enquiry.setPhone(request.phone().trim());
@@ -34,8 +40,29 @@ public class EnquiryService {
         enquiry.setHomeLoanRequired(request.homeLoanRequired());
         enquiry.setSource(request.source());
 
+        if (request.source() == EnquirySource.SITE_VISIT) {
+            enquiry.setVisitDate(request.visitDate());
+            enquiry.setTimeSlot(request.timeSlot().trim());
+            enquiry.setVisitors(request.visitors() != null ? request.visitors() : 1);
+        }
+
         Enquiry saved = enquiryRepository.save(enquiry);
         return toResponse(saved);
+    }
+
+    private void validateSiteVisit(EnquiryRequest request) {
+        if (request.source() != EnquirySource.SITE_VISIT) {
+            return;
+        }
+        if (request.visitDate() == null) {
+            throw new InvalidRequestException("Preferred visit date is required");
+        }
+        if (request.visitDate().isBefore(LocalDate.now())) {
+            throw new InvalidRequestException("Visit date cannot be in the past");
+        }
+        if (request.timeSlot() == null || request.timeSlot().isBlank()) {
+            throw new InvalidRequestException("Time slot is required");
+        }
     }
 
     private EnquiryResponse toResponse(Enquiry e) {
@@ -52,7 +79,10 @@ public class EnquiryService {
                 e.getSource(),
                 e.getStatus(),
                 e.getNotes(),
-                e.getCreatedAt());
+                e.getCreatedAt(),
+                e.getVisitDate(),
+                e.getTimeSlot(),
+                e.getVisitors());
     }
     
     @Transactional(readOnly = true)

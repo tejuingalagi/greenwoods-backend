@@ -1,5 +1,6 @@
 package com.teju.greenwoods.application.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.teju.greenwoods.domain.enums.EnquirySource;
@@ -18,6 +19,9 @@ public record EnquiryResponse(
         EnquirySource source,
         EnquiryStatus status,
         String notes,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        LocalDate visitDate,
+        String timeSlot,
+        Integer visitors
 ) {
 }

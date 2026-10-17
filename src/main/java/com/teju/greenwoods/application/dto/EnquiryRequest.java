@@ -1,8 +1,12 @@
 package com.teju.greenwoods.application.dto;
 
+import java.time.LocalDate;
+
 import com.teju.greenwoods.domain.enums.EnquirySource;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -37,6 +41,16 @@ public record EnquiryRequest(
         Boolean homeLoanRequired,
 
         @NotNull(message = "Source is required")
-        EnquirySource source
+        EnquirySource source,
+
+        LocalDate visitDate,
+
+        @Size(max = 50, message = "Time slot is too long")
+        String timeSlot,
+
+        @Min(value = 1, message = "At least 1 visitor")
+        @Max(value = 10, message = "At most 10 visitors")
+        Integer visitors
 ) {
+	
 }
