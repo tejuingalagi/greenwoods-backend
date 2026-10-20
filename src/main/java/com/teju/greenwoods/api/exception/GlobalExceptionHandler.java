@@ -1,6 +1,10 @@
 package com.teju.greenwoods.api.exception;
 
 import java.util.LinkedHashMap;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
+import com.teju.greenwoods.application.exception.StorageException;
 import com.teju.greenwoods.application.exception.InvalidRequestException;
 import org.springframework.http.HttpStatus;
 import com.teju.greenwoods.application.exception.InvalidCredentialsException;
@@ -65,6 +69,30 @@ public class GlobalExceptionHandler {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("status", 400);
         body.put("error", ex.getMessage());
+        return ResponseEntity.badRequest().body(body);
+    }
+    @ExceptionHandler(StorageException.class)
+    public ResponseEntity<Map<String, Object>> handleStorage(StorageException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("status", 502);
+        body.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(body);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<Map<String, Object>> handleTooLarge(MaxUploadSizeExceededException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("status", 413);
+        body.put("error", "The file is too large (maximum 5 MB)");
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(body);
+    }
+
+    @ExceptionHandler({MissingServletRequestPartException.class,
+            MissingServletRequestParameterException.class})
+    public ResponseEntity<Map<String, Object>> handleMissingParts(Exception ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("status", 400);
+        body.put("error", "Both a file and a folder are required");
         return ResponseEntity.badRequest().body(body);
     }
 }
